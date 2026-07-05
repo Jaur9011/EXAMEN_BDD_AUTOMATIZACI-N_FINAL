@@ -31,7 +31,7 @@ public class ConfigReader {
     }
 
     public static String get(String key) {
-        String value = properties.getProperty(key);
+        String value = System.getProperty(key, properties.getProperty(key));
         if (value == null) {
             throw new RuntimeException("La propiedad '" + key + "' no existe en config.properties");
         }
