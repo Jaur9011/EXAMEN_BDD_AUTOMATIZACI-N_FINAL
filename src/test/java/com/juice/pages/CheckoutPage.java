@@ -7,24 +7,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-/**
- * Orquesta todo el flujo posterior a la cesta:
- * seleccionar direccion (#/address/select) -&gt; velocidad de entrega
- * (#/delivery-method) -&gt; seleccionar metodo de pago (#/payment/shop) -&gt;
- * resumen del pedido (#/order-summary) -&gt; confirmacion (#/order-completion/*).
- *
- * Cada pantalla del wizard comparte el mismo boton "Continuar", por lo que
- * se reutiliza un unico metodo clickContinue().
- */
+/** Page del checkout. */
 public class CheckoutPage extends BasePage {
 
-    // Sin [not(@disabled)]: elementToBeClickable espera a que se habilite si esta temporalmente deshabilitado
+    // Boton continuar del wizard.
     private static final By CONTINUE_BUTTON = By.xpath(
             "//button[contains(., 'Continuar') or contains(., 'Continue') or contains(., 'Siguiente') or contains(., 'Next')]");
     private static final By ADDRESS_ROWS = By.cssSelector(".address-table mat-row, mat-radio-button");
     private static final By STANDARD_DELIVERY_ROW = By.xpath(
             "//*[contains(text(),'Entrega estándar') or contains(text(),'Standard Delivery')]");
-    // mat-radio-button cubre el caso en que el checkout muestra las tarjetas como radios en lugar de mat-rows
+    // Algunas versiones muestran radios y otras filas.
     private static final By CARD_ROWS = By.cssSelector("mat-table mat-row, mat-radio-button");
     private static final By PLACE_ORDER_BUTTON = By.xpath(
             "//button[contains(., 'Realice su pedido y pague') or contains(., 'Place your order and pay')]");
@@ -35,7 +27,7 @@ public class CheckoutPage extends BasePage {
         super(driver);
     }
 
-    /** Selecciona la direccion de envio por posicion (1 = primera, 2 = segunda...). */
+    /** Selecciona direccion por posicion. */
     public void selectAddress(int position) {
         List<WebElement> rows = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(ADDRESS_ROWS));
         click(rows.get(position - 1));
@@ -49,14 +41,11 @@ public class CheckoutPage extends BasePage {
         clickContinue();
     }
 
-    /** Selecciona el metodo de pago guardado por posicion (1 = primero, 2 = segundo...).
-     *  Juice Shop renderiza las tarjetas como mat-radio-button; hay que hacer click en el radio
-     *  (no en el mat-row) para que Angular actualice el estado del formulario y habilite Continue.
-     */
+    /** Selecciona metodo de pago por posicion. */
     public void selectPaymentMethod(int position) {
-        // Esperar a que el paso de pago cargue completamente
+        // Espera a que cargue el paso de pago.
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(CARD_ROWS));
-        // Intentar click en mat-radio-button primero; si no hay radios, caer en la fila de la tabla
+        // Primero intenta radio, si no, usa fila.
         List<WebElement> radios = driver.findElements(By.cssSelector("mat-radio-button"));
         if (!radios.isEmpty()) {
             click(radios.get(position - 1));
@@ -84,7 +73,7 @@ public class CheckoutPage extends BasePage {
     }
 
     public String getOrderId() {
-        // La url de confirmacion tiene el formato #/order-completion/{orderId}
+        // El id va al final de la URL.
         String url = driver.getCurrentUrl();
         return url.substring(url.lastIndexOf('/') + 1);
     }

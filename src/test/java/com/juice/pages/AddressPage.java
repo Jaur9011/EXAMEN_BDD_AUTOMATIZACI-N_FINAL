@@ -10,14 +10,7 @@ import com.juice.utils.ConfigReader;
 
 import io.qameta.allure.Step;
 
-/**
- * Pagina "Mis direcciones guardadas" (#/address/saved) y su formulario
- * de creacion (#/address/create).
- *
- * Nota sobre locators: Angular Material no deja ids fijos en varios de estos
- * campos (mat-input-N autogenerado), por lo que se localizan de forma
- * relativa a su mat-label, que si es estable.
- */
+/** Page de direcciones guardadas y crear direccion. */
 public class AddressPage extends BasePage {
 
     @FindBy(id = "address")
@@ -75,13 +68,13 @@ public class AddressPage extends BasePage {
         type(fieldByLabel("Estado", "State"), state);
         wait.until(d -> submitButton.isDisplayed() && submitButton.isEnabled());
         click(submitButton);
-        // Esperar a que Juice Shop navegue fuera del formulario (confirma que el POST fue enviado)
+        // Espera a que salga del formulario.
         wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/address/create")));
         log.info("Direccion agregada: {}, {}", address, city);
     }
 
     public int getSavedAddressCount() {
-        // Esperar presencia de mat-table (la clase .address-table puede no existir en esta pagina)
+        // Espera tabla de direcciones.
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-table, .address-table")));
         return driver.findElements(By.cssSelector("mat-table mat-row, .address-table mat-row")).size();
     }

@@ -6,7 +6,7 @@
     </listeners>
     <test name="Historial de pedidos">
         <classes>
-            <class name="com.juice.tests.HistorialRunner"/>
+            <class name="com.juice.runner.HistorialRunner"/>
         </classes>
     </test>
 </suite>

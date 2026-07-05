@@ -105,15 +105,21 @@ EXAMEN_BDD_AUTOMATION/
         │   │   ├── SearchResultsPage.java
         │   │   ├── CheckoutPage.java
         │   │   └── OrderHistoryPage.java
-        │   ├── tests/                          ← Step Definitions + Runners + Hooks
+        │   ├── runner/                         ← Cucumber Runners (TestNG)
         │   │   ├── TestRunner.java             ← Runner principal (@regression)
-        │   │   ├── Hooks.java                  ← Setup/Teardown + Screenshot en fallo
+        │   │   ├── RegistroLoginRunner.java
+        │   │   ├── DireccionPagoRunner.java
+        │   │   ├── CestaHistorialRunner.java
+        │   │   └── HistorialRunner.java
+        │   ├── steps/                          ← Step Definitions por historia
         │   │   ├── RegisterSteps.java
         │   │   ├── LoginSteps.java
         │   │   ├── AddressSteps.java
         │   │   ├── PaymentSteps.java
         │   │   ├── ShoppingSteps.java
         │   │   └── OrderHistorySteps.java
+        │   ├── config/
+        │   │   └── Hooks.java                  ← Setup/Teardown + Screenshot en fallo
         │   ├── listeners/
         │   │   └── ScreenshotListener.java     ← TestNG ITestListener
         │   ├── log/
@@ -333,6 +339,19 @@ https://TU_USUARIO.github.io/TU_REPO/
 ---
 
 ## 📝 Notas importantes
+
+### 📌 Decisiones tecnicas (detalle centralizado)
+
+Para mantener el codigo con comentarios cortos, el detalle tecnico queda aqui:
+
+1. **Paralelismo:** `DriverFactory` crea un `WebDriver` por hilo con `ThreadLocal`. `TestContext` guarda datos por escenario (email/password/orderIds) y se limpia en `Hooks`.
+2. **Estabilidad UI:** `BasePage` aplica esperas explicitas, reintentos en `click()` y `type()`, y fallback por JavaScript para overlays/transiciones de Angular.
+3. **Busqueda de productos:** `HomePage.searchProduct()` abre el buscador solo si hace falta y escribe usando locator fresco para evitar errores de interactuabilidad.
+4. **Checkout:** `CheckoutPage` maneja variaciones de UI (filas y radios) para direccion/metodo de pago y confirma pedido al final.
+5. **Historial de pedidos:** `OrderHistorySteps` valida historial usando IDs reales guardados en `TestContext`; `OrderHistoryPage` espera y busca pedidos visibles por ID.
+6. **Datos de prueba:** `TestDataGenerator` crea datos aleatorios para re-ejecuciones sin colisiones de usuarios.
+7. **Evidencia:** `Hooks` + `ScreenshotUtils` capturan screenshot al fallar y lo adjuntan a Allure, ademas de guardarlo en `screenShots/`.
+8. **Suites:** `TestRunner` corre regresion completa por `@regression`; runners parciales ejecutan grupos por tags para debug rapido.
 
 ### Búsqueda de productos
 

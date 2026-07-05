@@ -1,9 +1,9 @@
-package com.juice.tests;
+package com.juice.runner;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
-/** Suite parcial: Historia de usuario "Cesta" (2 pedidos) + "Historial de ordenes" (usada por testng4.xml). */
+/** Runner de cesta e historial. */
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = "com.juice",

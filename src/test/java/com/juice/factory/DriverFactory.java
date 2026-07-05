@@ -16,10 +16,7 @@ import com.juice.utils.ConfigReader;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-/**
- * Fabrica de WebDriver. Mantiene una instancia por hilo (ThreadLocal) para
- * permitir ejecucion en paralelo sin que los tests interfieran entre si.
- */
+/** Fabrica de drivers (uno por hilo). */
 public class DriverFactory {
 
     private static final Logger log = LogManager.getLogger(DriverFactory.class);

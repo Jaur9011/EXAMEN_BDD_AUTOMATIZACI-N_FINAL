@@ -15,14 +15,7 @@ import com.juice.log.LogManager;
 
 import io.qameta.allure.Attachment;
 
-/**
- * Utilidad para capturar screenshots. Se usa desde los Hooks de Cucumber
- * cuando un escenario falla (ver Hooks#tearDown, anotado con @After).
- *
- * La anotacion @Attachment (AspectJ weaving via allure-java-commons) adjunta
- * automaticamente el array de bytes retornado al reporte de Allure como imagen.
- * Adicionalmente la imagen se guarda en /screenShots del proyecto.
- */
+/** Utilidad para tomar screenshots. */
 public final class ScreenshotUtils {
 
     private static final Logger log = LogManager.getLogger(ScreenshotUtils.class);
@@ -31,18 +24,12 @@ public final class ScreenshotUtils {
     private ScreenshotUtils() {
     }
 
-    /**
-     * Toma un screenshot, lo adjunta al reporte de Allure via @Attachment y lo guarda en disco.
-     *
-     * @param driver       instancia activa del WebDriver
-     * @param scenarioName nombre usado para el archivo (se sanea de caracteres invalidos)
-     * @return bytes de la imagen capturada (adjuntados automaticamente por @Attachment)
-     */
+    /** Toma screenshot y lo guarda. */
     @Attachment(value = "Screenshot on Failure", type = "image/png", fileExtension = ".png")
     public static byte[] takeScreenshot(WebDriver driver, String scenarioName) {
         byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
-        // Guardar en la carpeta screenShots/ del proyecto
+        // Guarda copia local.
         try {
             String safeName = scenarioName.replaceAll("[^a-zA-Z0-9_-]", "_");
             String fileName = safeName + "_" + LocalDateTime.now().format(TS) + ".png";

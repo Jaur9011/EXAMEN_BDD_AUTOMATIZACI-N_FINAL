@@ -6,13 +6,7 @@ import org.testng.ITestResult;
 
 import com.juice.log.LogManager;
 
-/**
- * Listener TestNG de nivel de suite: complementa el hook de Cucumber
- * (com.juice.tests.Hooks) dejando trazabilidad en el log de arranque/cierre
- * de cada metodo de test y del resultado final (paso/fallo).
- *
- * Se registra en los testng*.xml con &lt;listeners&gt;.
- */
+/** Listener simple para logs de TestNG. */
 public class ScreenshotListener implements ITestListener {
 
     private static final Logger log = LogManager.getLogger(ScreenshotListener.class);
@@ -30,8 +24,7 @@ public class ScreenshotListener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         log.error("<<< FALLO: {} - {}", result.getMethod().getMethodName(), result.getThrowable());
-        // La captura de pantalla real se realiza en com.juice.tests.Hooks (@After),
-        // porque alli se tiene acceso directo al WebDriver del escenario de Cucumber.
+        // El screenshot real se toma en Hooks.
     }
 
     @Override

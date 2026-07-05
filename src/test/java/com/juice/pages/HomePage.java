@@ -12,15 +12,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.juice.utils.ConfigReader;
 
-/**
- * Pagina principal / catalogo de productos. Tambien centraliza el cierre
- * de los overlays que Juice Shop muestra al primer ingreso (dialogo de
- * bienvenida y banner de cookies), ya que interfieren con cualquier otra
- * interaccion si no se cierran primero.
- */
+/** Pagina principal del catalogo. */
 public class HomePage extends BasePage {
 
-    // #navbarSearch es estable; los contains cubren distintas traducciones del aria-label
+    // Boton de buscar.
     @FindBy(xpath = "//*[@id='navbarSearch' or (self::button and (contains(@aria-label,'earch') or contains(@aria-label,'squeda')))]")
     private WebElement searchIcon;
 
@@ -43,11 +38,7 @@ public class HomePage extends BasePage {
         return this;
     }
 
-    /**
-     * Cierra el dialogo de bienvenida y el banner de cookies si aparecen.
-     * Se usa un WebDriverWait corto y se ignoran los timeouts porque estos
-     * overlays no siempre se muestran (por ejemplo, en sesiones ya usadas).
-     */
+    /** Cierra popups si salen. */
     public void dismissPopups() {
         WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(4));
         try {
@@ -71,11 +62,7 @@ public class HomePage extends BasePage {
     }
 
     public void searchProduct(String term) {
-        // Si el input ya es visible (busqueda previa abierta), lo usamos directamente.
-        // Si no, hacemos click en el icono toggle y esperamos explicitamente a que
-        // el panel de busqueda se expanda antes de intentar escribir.
-        // Esto evita el TimeoutException en la 2da/3ra busqueda consecutiva, cuando
-        // Angular puede dejar el input en DOM-pero-invisible tras una transicion de pagina.
+        // Abre el buscador si todavia no esta visible.
         By searchInputLocator = By.cssSelector("#searchQuery input");
 
         boolean searchAlreadyOpen = driver.findElements(searchInputLocator)
@@ -83,12 +70,15 @@ public class HomePage extends BasePage {
 
         if (!searchAlreadyOpen) {
             click(searchIcon);
-            // Espera explicita hasta que el input sea visible tras el click en el toggle
+            // Espera corta para no escribir antes de tiempo.
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchInputLocator));
         }
 
-        type(searchInput, term);
-        searchInput.sendKeys(org.openqa.selenium.Keys.ENTER);
+        type(searchInputLocator,
+                org.openqa.selenium.Keys.chord(org.openqa.selenium.Keys.CONTROL, "a"),
+                org.openqa.selenium.Keys.DELETE,
+                term,
+                org.openqa.selenium.Keys.ENTER);
         log.info("Busqueda de producto: {}", term);
     }
 

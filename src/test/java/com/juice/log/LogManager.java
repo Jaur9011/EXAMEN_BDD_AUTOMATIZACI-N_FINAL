@@ -2,10 +2,7 @@ package com.juice.log;
 
 import org.apache.logging.log4j.Logger;
 
-/**
- * Envoltorio simple sobre Log4j2 para tener un unico punto de entrada
- * de logging (com.juice.log) usado por steps, pages y utils.
- */
+/** Helper minimo para obtener loggers. */
 public final class LogManager {
 
     private LogManager() {

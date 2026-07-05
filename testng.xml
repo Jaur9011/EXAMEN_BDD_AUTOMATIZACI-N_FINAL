@@ -8,7 +8,7 @@
 
     <test name="Regression - Todas las historias">
         <classes>
-            <class name="com.juice.tests.TestRunner"/>
+            <class name="com.juice.runner.TestRunner"/>
         </classes>
     </test>
 

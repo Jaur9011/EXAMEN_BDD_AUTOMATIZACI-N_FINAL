@@ -2,11 +2,7 @@ package com.juice.utils;
 
 import net.datafaker.Faker;
 
-/**
- * Generador de datos falsos (registro, direcciones, tarjetas) usando DataFaker.
- * Se usa para no depender de datos fijos y permitir reejecuciones sin
- * choques por "correo ya existente".
- */
+/** Genera datos de prueba. */
 public final class TestDataGenerator {
 
     private static final Faker faker = new Faker();
@@ -27,7 +23,7 @@ public final class TestDataGenerator {
     }
 
     public static String randomMobileNumber() {
-        // Juice Shop exige 8 a 20 digitos numericos
+        // Numero simple para pruebas.
         return faker.number().digits(9);
     }
 
@@ -55,10 +51,7 @@ public final class TestDataGenerator {
         return faker.name().fullName();
     }
 
-    /**
-     * Genera un numero de tarjeta valido (16 digitos) tipo Visa de prueba,
-     * basado en los ejemplos de BlueSnap (referencia del examen).
-     */
+    /** Genera una tarjeta de prueba de 16 digitos. */
     public static String randomCardNumber() {
         return "4111" + faker.number().digits(12);
     }

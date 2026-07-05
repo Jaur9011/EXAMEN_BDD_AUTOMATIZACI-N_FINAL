@@ -1,17 +1,11 @@
-package com.juice.tests;
+package com.juice.runner;
 
 import org.testng.annotations.DataProvider;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
-/**
- * Runner principal. Ejecuta todos los .feature bajo src/test/resources/features
- * usando el glue com.juice (steps + hooks) y publica los resultados en:
- *  - pretty / summary por consola
- *  - Cucumber HTML/JSON/JUnit XML en target/cucumber-reports
- *  - Allure results en target/allure-results (via el plugin AllureCucumber7Jvm)
- */
+/** Runner principal de regresion. */
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = "com.juice",

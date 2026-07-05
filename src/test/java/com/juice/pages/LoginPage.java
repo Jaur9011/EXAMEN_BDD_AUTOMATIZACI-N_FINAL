@@ -7,9 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import io.qameta.allure.Step;
 
-/**
- * Pagina de inicio de sesion (#/login).
- */
+/** Page de login. */
 public class LoginPage extends BasePage {
 
     @FindBy(id = "email")

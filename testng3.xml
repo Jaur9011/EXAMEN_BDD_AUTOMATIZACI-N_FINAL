@@ -8,7 +8,7 @@
 
     <test name="Direccion y Pago">
         <classes>
-            <class name="com.juice.tests.DireccionPagoRunner"/>
+            <class name="com.juice.runner.DireccionPagoRunner"/>
         </classes>
     </test>
 

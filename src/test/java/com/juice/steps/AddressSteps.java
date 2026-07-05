@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.steps;
 
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
@@ -11,7 +11,7 @@ import com.juice.utils.TestDataGenerator;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Entonces;
 
-/** Steps de la Historia de Usuario "Agregar Direccion" (address.feature). */
+/** Steps de direcciones. */
 public class AddressSteps {
 
     private static final Logger log = LogManager.getLogger(AddressSteps.class);
@@ -28,11 +28,7 @@ public class AddressSteps {
         Assert.assertEquals(count, 2, "Se esperaban 2 direcciones guardadas");
     }
 
-    /**
-     * Metodo reutilizable (no es un Step de Cucumber) invocado tambien desde
-     * ShoppingSteps/OrderHistorySteps para dejar el escenario en el estado
-     * previo requerido: "un usuario con 2 direcciones guardadas".
-     */
+    /** Helper para crear una direccion. */
     void agregarDireccion(String etiqueta) {
         AddressPage addressPage = new AddressPage(DriverFactory.getDriver());
         addressPage.openNewAddressForm();

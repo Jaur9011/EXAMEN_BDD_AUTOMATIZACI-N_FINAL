@@ -6,10 +6,7 @@ import java.util.Properties;
 
 import com.juice.log.LogManager;
 
-/**
- * Carga y expone las propiedades definidas en config.properties.
- * Se carga una sola vez desde el classpath (funciona tanto en IDE como en Maven).
- */
+/** Lee valores de config.properties. */
 public class ConfigReader {
 
     private static final Properties properties = new Properties();

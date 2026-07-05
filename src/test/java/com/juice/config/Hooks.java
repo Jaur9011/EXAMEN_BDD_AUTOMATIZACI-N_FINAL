@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.config;
 
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -12,13 +12,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 
-/**
- * Hooks de Cucumber. Aqui se cumple el requisito del examen de
- * "Implementar la captura de ScreenShot cuando el Test falle usando @annotations":
- * el metodo tearDown esta anotado con @After y, si el escenario fallo,
- * captura un screenshot que se adjunta al reporte de Allure y se guarda
- * en la carpeta /screenShots del proyecto.
- */
+/** Hooks de setup y teardown por escenario. */
 public class Hooks {
 
     private static final Logger log = LogManager.getLogger(Hooks.class);
@@ -36,7 +30,7 @@ public class Hooks {
         try {
             driver = DriverFactory.getDriver();
         } catch (IllegalStateException e) {
-            // El driver nunca llego a crearse (fallo en @Before): no hay nada que capturar ni cerrar
+            // Si no hay driver, solo limpia contexto.
             log.error("El escenario '{}' termino sin WebDriver activo: {}", scenario.getName(), e.getMessage());
             TestContext.clear();
             return;

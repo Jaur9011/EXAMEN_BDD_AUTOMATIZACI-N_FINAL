@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import com.juice.utils.ConfigReader;
 
-/** Pagina de la cesta de compras (#/basket). */
+/** Page de la cesta. */
 public class ShoppingPage extends BasePage {
 
     @FindBy(id = "checkoutButton")

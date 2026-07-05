@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.steps;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +20,12 @@ import io.cucumber.java.es.Entonces;
 
 import java.time.Duration;
 
-/** Steps de la Historia de Usuario "Registro" (register.feature). */
+/** Steps de registro. */
 public class RegisterSteps {
 
     private static final Logger log = LogManager.getLogger(RegisterSteps.class);
 
-    // Guarda las credenciales generadas por cada alias de usuario dentro del escenario
+    // Guarda email/password por alias.
     private final Map<String, String[]> registeredUsers = new HashMap<>();
 
     @Dado("que el usuario esta en la pagina de registro de la aplicacion")

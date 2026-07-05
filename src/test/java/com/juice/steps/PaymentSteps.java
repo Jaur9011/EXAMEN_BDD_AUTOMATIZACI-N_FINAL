@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.steps;
 
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
@@ -11,7 +11,7 @@ import com.juice.utils.TestDataGenerator;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Entonces;
 
-/** Steps de la Historia de Usuario "Metodos de Pago" (payment.feature). */
+/** Steps de metodos de pago. */
 public class PaymentSteps {
 
     private static final Logger log = LogManager.getLogger(PaymentSteps.class);
@@ -33,11 +33,7 @@ public class PaymentSteps {
         Assert.assertEquals(count, 2, "Se esperaban 2 tarjetas guardadas");
     }
 
-    /**
-     * Metodo reutilizable (no es un Step de Cucumber), usado tambien por
-     * ShoppingSteps/OrderHistorySteps para dejar 2 tarjetas registradas antes
-     * de completar un pedido.
-     */
+    /** Helper para agregar una tarjeta. */
     void agregarTarjeta() {
         PaymentPage paymentPage = new PaymentPage(DriverFactory.getDriver()).open();
         paymentPage.addCard(

@@ -5,6 +5,7 @@ import java.time.Duration;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
@@ -17,10 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.juice.log.LogManager;
 import com.juice.utils.ConfigReader;
 
-/**
- * Clase base para todas las Page Objects. Inicializa los @FindBy con
- * PageFactory (segun lo exigido por el examen: "Usar Page Object Model y Page Factory").
- */
+/** Base para todas las pages. */
 public abstract class BasePage {
 
     private static final By TRANSIENT_OVERLAYS = By.cssSelector(
@@ -40,6 +38,13 @@ public abstract class BasePage {
         return wait.until(ExpectedConditions.visibilityOf(element));
     }
 
+    protected WebElement waitVisible(By locator) {
+        return wait.until(driver -> driver.findElements(locator).stream()
+                .filter(this::isDisplayed)
+                .findFirst()
+                .orElse(null));
+    }
+
     protected WebElement waitClickable(WebElement element) {
         return wait.until(driver -> {
             try {
@@ -49,6 +54,14 @@ public abstract class BasePage {
                 return null;
             }
         });
+    }
+
+    protected WebElement waitClickable(By locator) {
+        return wait.until(driver -> driver.findElements(locator).stream()
+                .filter(this::isDisplayed)
+                .filter(WebElement::isEnabled)
+                .findFirst()
+                .orElse(null));
     }
 
     protected void click(WebElement element) {
@@ -66,7 +79,7 @@ public abstract class BasePage {
             }
         }
 
-        // Ultimo intento con JavaScript para casos donde Angular mantiene overlays breves.
+        // Ultimo intento por JS.
         waitTransientOverlays();
         WebElement el = waitClickable(element);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
@@ -82,8 +95,52 @@ public abstract class BasePage {
     }
 
     protected void type(WebElement element, String text) {
-        WebElement el = waitVisible(element);
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                WebElement el = waitClickable(element);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", el);
+                el.clear();
+                el.sendKeys(text);
+                return;
+            } catch (StaleElementReferenceException | InvalidElementStateException e) {
+                attempts++;
+                log.debug("Reintentando escritura (intento {} de 3): {}", attempts + 1, e.getClass().getSimpleName());
+            }
+        }
+
+        WebElement el = waitClickable(element);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", el);
         el.clear();
         el.sendKeys(text);
+    }
+
+    protected void type(By locator, CharSequence... keys) {
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                WebElement el = waitClickable(locator);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", el);
+                el.clear();
+                el.sendKeys(keys);
+                return;
+            } catch (StaleElementReferenceException | InvalidElementStateException e) {
+                attempts++;
+                log.debug("Reintentando escritura por locator (intento {} de 3): {}", attempts + 1, e.getClass().getSimpleName());
+            }
+        }
+
+        WebElement el = waitClickable(locator);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", el);
+        el.clear();
+        el.sendKeys(keys);
+    }
+
+    private boolean isDisplayed(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            return false;
+        }
     }
 }

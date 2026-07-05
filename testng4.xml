@@ -8,7 +8,7 @@
 
     <test name="Cesta y Historial">
         <classes>
-            <class name="com.juice.tests.CestaHistorialRunner"/>
+            <class name="com.juice.runner.CestaHistorialRunner"/>
         </classes>
     </test>
 

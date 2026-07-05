@@ -1,4 +1,6 @@
-package com.juice.tests;
+package com.juice.steps;
+
+import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebElement;
@@ -10,12 +12,13 @@ import com.juice.pages.HomePage;
 import com.juice.pages.OrderHistoryPage;
 import com.juice.pages.SearchResultsPage;
 import com.juice.utils.ScreenshotUtils;
+import com.juice.utils.TestContext;
 
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Entonces;
 
-/** Steps de la Historia de Usuario "Historial de ordenes" (order_history.feature). */
+/** Steps de historial de pedidos. */
 public class OrderHistorySteps {
 
     private static final Logger log = LogManager.getLogger(OrderHistorySteps.class);
@@ -24,10 +27,10 @@ public class OrderHistorySteps {
     public void usuario_completo_2_pedidos() {
         ShoppingSteps shoppingSteps = new ShoppingSteps();
 
-        // Deja al usuario logueado, con 2 direcciones y 2 metodos de pago guardados
+        // Prepara usuario con datos necesarios.
         shoppingSteps.prepararUsuarioConDireccionesYPagos();
 
-        // Pedido 1: busqueda de manzana / banana / camiseta
+        // Pedido 1.
         HomePage homePage = new HomePage(DriverFactory.getDriver());
         SearchResultsPage resultsPage = new SearchResultsPage(DriverFactory.getDriver());
 
@@ -40,7 +43,7 @@ public class OrderHistorySteps {
         shoppingSteps.completarPedidoConSegundaDireccionYPrimerPago();
         log.info("Pedido 1 completado");
 
-        // Pedido 2: 2 productos aleatorios del catalogo
+        // Pedido 2.
         homePage.open();
         resultsPage.addRandomProductToCart();
         resultsPage.addRandomProductToCart();
@@ -56,16 +59,23 @@ public class OrderHistorySteps {
     @Entonces("el historial muestra al menos 2 pedidos completados")
     public void el_historial_muestra_al_menos_2_pedidos() {
         OrderHistoryPage orderHistoryPage = new OrderHistoryPage(DriverFactory.getDriver());
-        int count = orderHistoryPage.waitForOrders(2);
+        List<String> orderIds = TestContext.getOrderIds();
+        int count = orderIds.isEmpty()
+                ? orderHistoryPage.waitForOrders(2)
+                : orderHistoryPage.waitForOrderIds(orderIds);
         Assert.assertTrue(count >= 2, "Se esperaban al menos 2 pedidos en el historial, se encontraron " + count);
-        log.info("El historial muestra {} pedidos", count);
+        log.info("El historial muestra {} pedidos. IDs esperados: {}", count, orderIds);
     }
 
     @Entonces("se captura evidencia screenshot de cada uno de los 2 pedidos")
     public void se_captura_evidencia_de_cada_pedido() {
         OrderHistoryPage orderHistoryPage = new OrderHistoryPage(DriverFactory.getDriver());
+        List<String> orderIds = TestContext.getOrderIds();
+
         for (int i = 1; i <= 2; i++) {
-            WebElement orderBlock = orderHistoryPage.getOrderBlock(i);
+            WebElement orderBlock = orderIds.size() >= i
+                    ? orderHistoryPage.getOrderElementById(orderIds.get(i - 1))
+                    : orderHistoryPage.getOrderBlock(i);
             ((org.openqa.selenium.JavascriptExecutor) DriverFactory.getDriver())
                     .executeScript("arguments[0].scrollIntoView({block:'center'});", orderBlock);
             ScreenshotUtils.takeScreenshot(DriverFactory.getDriver(), "historial_pedido_" + i);

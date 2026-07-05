@@ -8,7 +8,7 @@
 
     <test name="Registro y Login">
         <classes>
-            <class name="com.juice.tests.RegistroLoginRunner"/>
+            <class name="com.juice.runner.RegistroLoginRunner"/>
         </classes>
     </test>
 

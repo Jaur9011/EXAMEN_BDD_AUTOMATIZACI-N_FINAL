@@ -1,7 +1,7 @@
-package com.juice.tests;
+package com.juice.runner;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
-/** Runner específico para ejecutar solo la historia con tag @historial. */
+/** Runner para historial. */
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = "com.juice",

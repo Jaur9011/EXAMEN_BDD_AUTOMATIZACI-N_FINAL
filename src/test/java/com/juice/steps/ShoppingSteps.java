@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.steps;
 
 import java.util.Map;
 
@@ -11,22 +11,18 @@ import com.juice.pages.ShoppingPage;
 import com.juice.pages.CheckoutPage;
 import com.juice.pages.HomePage;
 import com.juice.pages.SearchResultsPage;
+import com.juice.utils.TestContext;
 
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Entonces;
 
-/** Steps de la Historia de Usuario "Cesta" (shopping.feature), Pedido 1 y Pedido 2. */
+/** Steps de cesta. */
 public class ShoppingSteps {
 
     private static final Logger log = LogManager.getLogger(ShoppingSteps.class);
 
-    /**
-     * Juice Shop indexa la busqueda por el nombre INTERNO del producto en
-     * ingles, aunque la interfaz se muestre traducida al espanol (verificado
-     * manualmente contra la instancia local antes de escribir este mapeo).
-     * Por eso "manzana" -&gt; "apple", "banana" -&gt; "banana", "camiseta" -&gt; "shirt".
-     */
+    /** Mapa simple de terminos de busqueda. */
     private static final Map<String, String> TERMINO_BUSQUEDA = Map.of(
             "manzana", "apple",
             "banana", "banana",
@@ -70,7 +66,7 @@ public class ShoppingSteps {
         log.info("Pedido confirmado con id: {}", checkoutPage.getOrderId());
     }
 
-    // --------- Helpers reutilizables desde OrderHistorySteps ---------
+    // Helpers usados tambien por historial.
 
     void prepararUsuarioConDireccionesYPagos() {
         LoginSteps loginSteps = new LoginSteps();
@@ -95,6 +91,11 @@ public class ShoppingSteps {
         checkoutPage.chooseStandardDelivery();
         checkoutPage.selectPaymentMethod(1);
         checkoutPage.confirmOrderSummary();
+        Assert.assertTrue(checkoutPage.isOrderConfirmed(), "El pedido no llego a la pantalla de confirmacion durante la preparacion del escenario");
+
+        String orderId = checkoutPage.getOrderId();
+        TestContext.addOrderId(orderId);
+        log.info("Pedido confirmado con id: {}", orderId);
     }
 }
 

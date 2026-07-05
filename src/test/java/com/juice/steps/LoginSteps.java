@@ -1,4 +1,4 @@
-package com.juice.tests;
+package com.juice.steps;
 
 import java.time.Duration;
 
@@ -19,11 +19,7 @@ import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Entonces;
 
-/**
- * Steps compartidos de autenticacion. Se usan tanto en login.feature como en
- * el Background de address/payment/basket/order_history (que necesitan un
- * usuario ya logueado).
- */
+/** Steps de login y registro de apoyo. */
 public class LoginSteps {
 
     private static final Logger log = LogManager.getLogger(LoginSteps.class);
@@ -65,10 +61,7 @@ public class LoginSteps {
         log.info("Mensaje de error mostrado: {}", error);
     }
 
-    // --------- Helpers reutilizados por otros Steps (Address/Payment/Basket/OrderHistory) ---------
-    // Se dejan "package-private" (sin modificador) para poder invocarlos directamente
-    // desde otras clases de Steps del mismo paquete com.juice.tests sin depender
-    // de un framework de inyeccion de dependencias.
+    // Helpers compartidos entre steps.
 
     void registrarNuevoUsuario() {
         String email = TestDataGenerator.randomEmail();
@@ -81,8 +74,7 @@ public class LoginSteps {
         RegisterPage registerPage = new RegisterPage(DriverFactory.getDriver());
         registerPage.register(email, password, "Ranty QA Automation");
 
-        // Esperar confirmacion de que el usuario fue creado en la BD (redireccion a /login)
-        // antes de intentar el login, para evitar "Invalid email or password" por race condition
+        // Espera redireccion a login antes de continuar.
         new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(20))
                 .until(ExpectedConditions.urlContains("/login"));
 
@@ -91,11 +83,11 @@ public class LoginSteps {
     }
 
     void iniciarSesionConCredencialesCorrectas() {
-        // Navegacion explicita: no depender de la redireccion automatica post-registro
+        // Navega directo a login para evitar estados intermedios.
         new HomePage(DriverFactory.getDriver()).goToLogin();
         LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
         loginPage.login(TestContext.getEmail(), TestContext.getPassword());
-        // Esperar a que el JWT quede guardado en localStorage antes de navegar a rutas protegidas
+        // Valida que realmente inicio sesion.
         Assert.assertTrue(loginPage.isLoggedIn(), "El login fallo durante la configuracion del escenario");
         log.info("Login confirmado: usuario en catalogo");
     }
