@@ -3,9 +3,11 @@ package com.juice.pages;
 import java.time.Duration;
 
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -20,6 +22,9 @@ import com.juice.utils.ConfigReader;
  * PageFactory (segun lo exigido por el examen: "Usar Page Object Model y Page Factory").
  */
 public abstract class BasePage {
+
+    private static final By TRANSIENT_OVERLAYS = By.cssSelector(
+            ".mat-mdc-snack-bar-container, .mat-snack-bar-container, .mdc-snackbar, .cdk-overlay-backdrop.cdk-overlay-backdrop-showing");
 
     protected final WebDriver driver;
     protected final WebDriverWait wait;
@@ -50,6 +55,7 @@ public abstract class BasePage {
         int attempts = 0;
         while (attempts < 3) {
             try {
+                waitTransientOverlays();
                 WebElement el = waitClickable(element);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'});", el);
                 el.click();
@@ -61,8 +67,18 @@ public abstract class BasePage {
         }
 
         // Ultimo intento con JavaScript para casos donde Angular mantiene overlays breves.
+        waitTransientOverlays();
         WebElement el = waitClickable(element);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
+    }
+
+    private void waitTransientOverlays() {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(d -> d.findElements(TRANSIENT_OVERLAYS).stream().noneMatch(WebElement::isDisplayed));
+        } catch (TimeoutException e) {
+            log.debug("Overlay transitorio aun visible, se continua con reintento de click");
+        }
     }
 
     protected void type(WebElement element, String text) {

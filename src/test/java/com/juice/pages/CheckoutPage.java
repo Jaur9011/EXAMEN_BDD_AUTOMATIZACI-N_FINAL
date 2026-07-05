@@ -69,8 +69,8 @@ public class CheckoutPage extends BasePage {
     }
 
     public void confirmOrderSummary() {
-        WebElement placeOrder = wait.until(ExpectedConditions.elementToBeClickable(PLACE_ORDER_BUTTON));
-        placeOrder.click();
+        WebElement placeOrder = wait.until(ExpectedConditions.visibilityOfElementLocated(PLACE_ORDER_BUTTON));
+        click(placeOrder);
         log.info("Pedido confirmado");
     }
 
@@ -90,7 +90,7 @@ public class CheckoutPage extends BasePage {
     }
 
     private void clickContinue() {
-        WebElement continueBtn = wait.until(ExpectedConditions.elementToBeClickable(CONTINUE_BUTTON));
-        continueBtn.click();
+        WebElement continueBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(CONTINUE_BUTTON));
+        click(continueBtn);
     }
 }

@@ -46,8 +46,8 @@ public class SearchResultsPage extends BasePage {
             List<WebElement> btns = d.findElements(ADD_TO_CART_BUTTONS);
             return btns.isEmpty() ? null : btns;
         });
-        WebElement btn = wait.until(ExpectedConditions.elementToBeClickable(buttons.get(0)));
-        btn.click();
+        WebElement btn = wait.until(ExpectedConditions.visibilityOf(buttons.get(0)));
+        click(btn);
         log.info("Producto agregado a la cesta desde resultados de busqueda");
     }
 
@@ -59,8 +59,8 @@ public class SearchResultsPage extends BasePage {
         });
         int index = new Random().nextInt(buttons.size());
         WebElement btn = buttons.get(index);
-        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'});", btn);
-        wait.until(ExpectedConditions.elementToBeClickable(btn)).click();
+        wait.until(ExpectedConditions.visibilityOf(btn));
+        click(btn);
         log.info("Producto aleatorio #{} agregado a la cesta", index);
     }
 }
