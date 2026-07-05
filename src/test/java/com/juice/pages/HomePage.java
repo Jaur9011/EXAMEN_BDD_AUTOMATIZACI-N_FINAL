@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -74,11 +75,22 @@ public class HomePage extends BasePage {
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchInputLocator));
         }
 
-        type(searchInputLocator,
-                org.openqa.selenium.Keys.chord(org.openqa.selenium.Keys.CONTROL, "a"),
-                org.openqa.selenium.Keys.DELETE,
-                term,
-                org.openqa.selenium.Keys.ENTER);
+        try {
+            type(searchInputLocator,
+                    org.openqa.selenium.Keys.chord(org.openqa.selenium.Keys.CONTROL, "a"),
+                    org.openqa.selenium.Keys.DELETE,
+                    term,
+                    org.openqa.selenium.Keys.ENTER);
+        } catch (TimeoutException e) {
+            log.warn("Input de busqueda no interactuable al primer intento, reabriendo buscador");
+            click(searchIcon);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(searchInputLocator));
+            type(searchInputLocator,
+                    org.openqa.selenium.Keys.chord(org.openqa.selenium.Keys.CONTROL, "a"),
+                    org.openqa.selenium.Keys.DELETE,
+                    term,
+                    org.openqa.selenium.Keys.ENTER);
+        }
         log.info("Busqueda de producto: {}", term);
     }
 

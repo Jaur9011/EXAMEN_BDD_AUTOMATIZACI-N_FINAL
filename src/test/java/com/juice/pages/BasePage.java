@@ -57,11 +57,19 @@ public abstract class BasePage {
     }
 
     protected WebElement waitClickable(By locator) {
-        return wait.until(driver -> driver.findElements(locator).stream()
-                .filter(this::isDisplayed)
-                .filter(WebElement::isEnabled)
-                .findFirst()
-                .orElse(null));
+        return wait.until(driver -> {
+            for (WebElement candidate : driver.findElements(locator)) {
+                try {
+                    WebElement clickable = ExpectedConditions.elementToBeClickable(candidate).apply(driver);
+                    if (clickable != null && clickable.isEnabled()) {
+                        return clickable;
+                    }
+                } catch (StaleElementReferenceException ignored) {
+                    // Si el DOM cambia, seguimos con el siguiente intento del wait.
+                }
+            }
+            return null;
+        });
     }
 
     protected void click(WebElement element) {
